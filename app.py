@@ -71,7 +71,7 @@ class App(customtkinter.CTk):
                                                  anchor='e')
         self.label_size.grid(column=2, row=4, padx=(0, 10), pady=10, sticky='new', ipadx=0)
 
-    def check_btn(self): # Функция для кнопки проверки
+    def check_btn(self):  # Функция для кнопки проверки
         try:
             global check_link
             check_link = self.entry_link.get()
