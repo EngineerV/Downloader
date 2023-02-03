@@ -6,6 +6,14 @@ DATA_FILES = ['512png.png', 'logo.png']
 OPTIONS = {
     'iconfile': '512png.png',
     'argv_emulation': False,
+    'plist': {
+        'CFBundleName': APP_NAME,
+        'CFBundleDisplayName': APP_NAME,
+        'CFBundleGetInfoString': 'Desktop Founds Control',
+        'CFBundleVersion': '0.1.0 stable',
+        'CFBundleShortVersionString': '0.1.0',
+        'NSHumanReadableCopyRight': 'Copyright (c) 2023, VA, All Rights Reserved'
+    }
 }
 
 setup(

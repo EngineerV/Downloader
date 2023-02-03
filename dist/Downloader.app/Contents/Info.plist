@@ -8,6 +8,8 @@
 	<string>Downloader</string>
 	<key>CFBundleExecutable</key>
 	<string>Downloader</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Desktop Founds Control</string>
 	<key>CFBundleIconFile</key>
 	<string>512png.png</string>
 	<key>CFBundleIdentifier</key>
@@ -19,15 +21,17 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.0.0</string>
+	<string>0.1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.0.0</string>
+	<string>0.1.0 stable</string>
 	<key>LSHasLocalizedDisplayName</key>
 	<false/>
 	<key>NSAppleScriptEnabled</key>
 	<false/>
+	<key>NSHumanReadableCopyRight</key>
+	<string>Copyright (c) 2023, VA, All Rights Reserved</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright not specified</string>
 	<key>NSMainNibFile</key>
