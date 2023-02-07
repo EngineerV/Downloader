@@ -72,7 +72,7 @@
 	<key>PythonInfoDict</key>
 	<dict>
 		<key>PythonExecutable</key>
-		<string>/Library/Frameworks/Python.framework/Versions/3.11/bin/python3</string>
+		<string>/Users/vadim/PycharmProjects/Parsing &amp; Download YOTUBE/venv/bin/python3</string>
 		<key>PythonLongVersion</key>
 		<string>3.11.0 (v3.11.0:deaf509e8f, Oct 24 2022, 14:43:23) [Clang 13.0.0 (clang-1300.0.29.30)]</string>
 		<key>PythonShortVersion</key>

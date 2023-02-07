@@ -132,7 +132,7 @@ def _recipes_pil_prescript(plugins):
     Image.init = init
 
 
-_recipes_pil_prescript(['GifImagePlugin', 'IcoImagePlugin', 'SunImagePlugin', 'MspImagePlugin', 'PdfImagePlugin', 'FtexImagePlugin', 'TgaImagePlugin', 'IptcImagePlugin', 'SgiImagePlugin', 'WebPImagePlugin', 'CurImagePlugin', 'IcnsImagePlugin', 'Jpeg2KImagePlugin', 'SpiderImagePlugin', 'FliImagePlugin', 'DdsImagePlugin', 'PsdImagePlugin', 'PalmImagePlugin', 'BufrStubImagePlugin', 'WmfImagePlugin', 'McIdasImagePlugin', 'JpegImagePlugin', 'ImImagePlugin', 'PcdImagePlugin', 'PixarImagePlugin', 'GribStubImagePlugin', 'MicImagePlugin', 'TiffImagePlugin', 'XpmImagePlugin', 'BmpImagePlugin', 'FitsStubImagePlugin', 'PpmImagePlugin', 'XVThumbImagePlugin', 'XbmImagePlugin', 'FitsImagePlugin', 'PngImagePlugin', 'PcxImagePlugin', 'GbrImagePlugin', 'DcxImagePlugin', 'MpoImagePlugin', 'BlpImagePlugin', 'MpegImagePlugin', 'ImtImagePlugin', 'EpsImagePlugin', 'Hdf5StubImagePlugin', 'FpxImagePlugin'])
+_recipes_pil_prescript(['GifImagePlugin', 'PngImagePlugin', 'TgaImagePlugin', 'XpmImagePlugin', 'XbmImagePlugin', 'PdfImagePlugin', 'IptcImagePlugin', 'JpegImagePlugin', 'PixarImagePlugin', 'GribStubImagePlugin', 'GbrImagePlugin', 'FliImagePlugin', 'FitsImagePlugin', 'ImtImagePlugin', 'MspImagePlugin', 'ImImagePlugin', 'XVThumbImagePlugin', 'SgiImagePlugin', 'FpxImagePlugin', 'EpsImagePlugin', 'DcxImagePlugin', 'BlpImagePlugin', 'SpiderImagePlugin', 'FitsStubImagePlugin', 'WmfImagePlugin', 'TiffImagePlugin', 'MicImagePlugin', 'MpegImagePlugin', 'WebPImagePlugin', 'CurImagePlugin', 'PpmImagePlugin', 'PcxImagePlugin', 'FtexImagePlugin', 'SunImagePlugin', 'Jpeg2KImagePlugin', 'DdsImagePlugin', 'IcoImagePlugin', 'PcdImagePlugin', 'PalmImagePlugin', 'MpoImagePlugin', 'McIdasImagePlugin', 'PsdImagePlugin', 'BufrStubImagePlugin', 'Hdf5StubImagePlugin', 'IcnsImagePlugin', 'BmpImagePlugin'])
 
 
 def _setup_ctypes():
@@ -205,15 +205,6 @@ def _setup_openssl():
         resourcepath, "openssl.ca", "no-such-file")
 
 _setup_openssl()
-
-
-def _boot_tkinter():
-    import os
-
-    resourcepath = os.environ["RESOURCEPATH"]
-    os.putenv("TCL_LIBRARY", os.path.join(resourcepath, "lib/tcl8"))
-    os.putenv("TK_LIBRARY", os.path.join(resourcepath, "lib/tk8.6"))
-_boot_tkinter()
 
 
 DEFAULT_SCRIPT='app.py'
