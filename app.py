@@ -1,10 +1,8 @@
-import http.client
-import time
-import urllib.error
-import pytube.exceptions
-from pytube import YouTube, Playlist
+from pytube import YouTube, Playlist, exceptions as PYex
 from threading import Thread
 from PIL import Image, ImageTk
+import http.client
+import urllib.error
 import customtkinter
 import requests
 import tkinter
@@ -15,8 +13,9 @@ customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-bl
 
 
 class App(customtkinter.CTk):
-    def __init__(self):
+    def __init__(self, count=0):
         super().__init__()
+        self.count = count
         # Определяем Размер окна, название окна и запрещаем менять размер окна.
         self.title("Downloader")
         self.geometry("600x450")
@@ -76,7 +75,7 @@ class App(customtkinter.CTk):
                                                        command=self.threading)
         self.download_button.grid(column=0, row=4, sticky='ew', padx=10, pady=10)
 
-        #  Шкала прогресса загрузки
+        # Шкала прогресса загрузки
         self.progressbar = customtkinter.CTkProgressBar(self.tabview.tab("VIDEO ↓"), mode='determinate')
         self.progressbar.grid(column=1, row=4, padx=10, pady=10, sticky="ew")
         self.progressbar.set(0)
@@ -101,7 +100,7 @@ class App(customtkinter.CTk):
         # Listbox для списка ссылок вилео из плэйлиста
         self.listbox = tkinter.Listbox(self.tabview.tab("PLAYLIST ↓"), selectmode='extended',
                                        font=(None, 12))
-        self.listbox.grid(column=0, row=1, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.listbox.grid(column=0, row=1, columnspan=3, padx=10, pady=10, sticky="ew")
         self.listbox.bind("<<ListboxSelect>>", self.selected)
 
         # Чекбокс для выделения (отмены выделения) всех полученных ссылок в Listbox
@@ -110,11 +109,15 @@ class App(customtkinter.CTk):
                                                   command=self.selected_all, variable=self.var)
         self.checkbox.grid(column=0, row=2, padx=10, pady=10, sticky="w")
 
+        # Лэйбл с информацией о количестве выбранных файлов
+        self.label_count_playlist = customtkinter.CTkLabel(self.tabview.tab("PLAYLIST ↓"), text='0 / 0',
+                                                           font=(None, 10), anchor='w')
+        self.label_count_playlist.grid(column=1, row=2, padx=(10, 10), pady=10, sticky='ew', ipadx=0)
+
         # Лэйбл с информацией о размере полученного видео и текущем размере загрузки
         self.label_size_playlist = customtkinter.CTkLabel(self.tabview.tab("PLAYLIST ↓"), text='0.0 Mb',
-                                                          font=(None, 10),
-                                                          anchor='e')
-        self.label_size_playlist.grid(column=1, row=2, padx=(10, 10), pady=10, sticky='ew', ipadx=0)
+                                                          font=(None, 10), anchor='e')
+        self.label_size_playlist.grid(column=2, row=2, padx=(10, 10), pady=10, sticky='ew', ipadx=0)
 
         # Кнопка для выбора места загрузки (сохранения) playlist
         self.save_button_playlist = customtkinter.CTkButton(self.tabview.tab("PLAYLIST ↓"),
@@ -129,15 +132,16 @@ class App(customtkinter.CTk):
 
         # Кнопка для загрузки всех выделенных ссылок в Listbox
         self.download_button_playlist = customtkinter.CTkButton(self.tabview.tab("PLAYLIST ↓"), text='Скачать',
-                                                                state="normal", command=self.threading)
+                                                                state="disabled", command=self.threading)
         self.download_button_playlist.grid(column=0, row=4, sticky='ew', padx=10, pady=10)
 
         #  Шкала прогресса загрузки
         self.progressbar_playlist = customtkinter.CTkProgressBar(self.tabview.tab("PLAYLIST ↓"), mode='determinate')
-        self.progressbar_playlist.grid(column=1, row=4, padx=10, pady=10, sticky="ew")
+        self.progressbar_playlist.grid(column=1, columnspan=2, row=4, padx=10, pady=10, sticky="ew")
         self.progressbar_playlist.set(0.0)
 
-    def check_btn(self):  # Функция для кнопки проверки
+    def check_btn(self):
+        """Функция для кнопки проверки video"""
         try:
             check_link = self.entry_link.get()
             if check_link == "":
@@ -170,7 +174,7 @@ class App(customtkinter.CTk):
                 tkinter.messagebox.showerror(title='Error', message='Что-то не так, повторите попытку')
 
     def check_btn_playlist(self):
-        """Функция для кнопки проверки"""
+        """Функция для кнопки проверки playlist"""
         try:
             check_link_playlist = self.entry_link_playlist.get()
             playlist = Playlist(check_link_playlist)
@@ -181,7 +185,7 @@ class App(customtkinter.CTk):
                 END = playlist.length
                 for num, url in enumerate(playlist.video_urls, 0):
                     self.listbox.insert(END, f'{num + 1}) {url}')
-
+                self.download_button_playlist.configure(state='normal')
         except urllib.error.URLError:
             tkinter.messagebox.showerror(title='Error', message='Проверьте соединение с интернетом')
         except pytube.exceptions.RegexMatchError:
@@ -196,32 +200,38 @@ class App(customtkinter.CTk):
                 tkinter.messagebox.showerror(title='Error', message='Что-то не так, повторите попытку')
 
     def selected_all(self):
+        """Функция checkbox для выделееия (снятия выделения) всех элементов из listbox"""
         if self.var.get():
             self.listbox.select_set(0, self.listbox.size())
         else:
             self.listbox.select_clear(0, self.listbox.size())
         selected_indices = self.listbox.curselection()
         selected_links = " ".join(self.listbox.get(i) for i in selected_indices)
-        print(selected_links.split()[1::2])
+        self.label_count_playlist.configure(text=f'{self.count} / {len(selected_links.split()[1::2])}')
 
     def selected(self, event):
-        # получаем индексы выделенных элементов
+        """Функция для получения выбранных элементов"""
         selected_indices = self.listbox.curselection()
         selected_links = " ".join(self.listbox.get(i) for i in selected_indices)
-        print(selected_links.split()[1::2])
+        self.label_count_playlist.configure(text=f'{self.count} / {len(selected_links.split()[1::2])}')
 
-    def path_btn(self):  # Функция для кнопки выбора пути сохранения video
+    def path_btn(self):
+        """Функция для кнопки выбора пути сохранения video"""
         self.entry_path_playlist.delete(0, len(self.entry_path_playlist.get()))
         self.entry_path.insert(0, f'{customtkinter.filedialog.askdirectory()}')
 
-    def path_btn_playlist(self):  # Функция для кнопки выбора пути сохранения playlist
+    def path_btn_playlist(self):
+        """Функция для кнопки выбора пути сохранения playlist"""
         self.entry_path_playlist.delete(0, len(self.entry_path_playlist.get()))
         self.entry_path_playlist.insert(0, f'{customtkinter.filedialog.askdirectory()}')
 
-    def download_video(self):  # Функция для кнопки загрузки
+    def download_video(self):
+        """Функция для кнопки загрузки video"""
         try:
             download_link = self.entry_link.get()
             file_name = self.entry_name.get()
+            self.entry_path.configure(state="disabled")
+            self.download_button.configure(state="disabled")
             if file_name == "":
                 file_name = YouTube(download_link).title
 
@@ -241,10 +251,18 @@ class App(customtkinter.CTk):
             stream = yt.streams.filter(progressive=True, file_extension='mp4').get_highest_resolution()
             stream.download(output_path=f'{self.entry_path.get()}', filename=f'{file_name}.mp4')
             tkinter.messagebox.showinfo(title='Download Complete', message='Video has been downloaded successfully.')
+            self.entry_path.configure(state="normal")
+            self.download_button.configure(state="normal")
         except Exception as e:
-            print("log", e)
+            if type(e) == http.client.IncompleteRead or type(e) == PYex.PytubeError:
+                print(f'****** {type(e)} ********')
+                self.download_video()
+            else:
+                print(e)
+                tkinter.messagebox.showerror(title='Error', message='Что-то не так, повторите попытку')
 
     def download_playlist(self):
+        """Функция для кнопки загрузки playlist"""
         try:
             def on_progress(stream, chunk, bytes_remaining):
                 # the total size of the video
@@ -261,20 +279,36 @@ class App(customtkinter.CTk):
 
             selected_indices = self.listbox.curselection()
             selected_links = " ".join(self.listbox.get(i) for i in selected_indices).split()[1::2]
+            self.entry_path_playlist.configure(state="disabled")
+            self.download_button_playlist.configure(state="disabled")
+
+            if self.entry_path_playlist.get() == '':
+                path = os.getcwd()
+            else:
+                path = self.entry_path_playlist.get()
+
             for i in selected_links:
                 yt_obj = YouTube(i, on_progress_callback=on_progress)
-                if os.path.exists(f'{self.entry_path_playlist.get()}/{yt_obj.title}.mp4'):
+                if os.path.isfile(f'{path}/{yt_obj.title}.mp4'):
+                    print("уже скачано")
+                    self.label_count_playlist.configure(text=f'{self.count} / {len(selected_links)}')
                     continue
                 else:
                     filters = yt_obj.streams.filter(progressive=True, file_extension='mp4')
                     filters.get_highest_resolution().download(output_path=f'{self.entry_path_playlist.get()}',
                                                               filename=f'{yt_obj.title}.mp4')
                     print(f'Uploaded {yt_obj.title}.mp4')
-            # self.progressbar_playlist.set(progr * 100 // new * 0.01)
+
+                    if self.count < len(selected_links):
+                        self.count += 1
+                    self.label_count_playlist.configure(text=f'{self.count} / {len(selected_links)}')
             tkinter.messagebox.showinfo(title='Download Complete',
                                         message='Selected videos uploaded successfully.')
+            self.count = 0
+            self.entry_path_playlist.configure(state="normal")
+            self.download_button_playlist.configure(state="normal")
         except Exception as e:
-            if type(e) == http.client.IncompleteRead:
+            if type(e) == http.client.IncompleteRead or type(e) == PYex.PytubeError:
                 print(f'****** {type(e)} ********')
                 self.download_playlist()
             else:
@@ -282,12 +316,17 @@ class App(customtkinter.CTk):
                 tkinter.messagebox.showerror(title='Error', message='Что-то не так, повторите попытку')
 
     def threading(self):
-        if self.tabview.get() == 'VIDEO ↓':
-            t1 = Thread(target=self.download_video)
-            t1.start()
-        else:
-            t2 = Thread(target=self.download_playlist)
-            t2.start()
+        try:
+
+            if self.tabview.get() == 'VIDEO ↓':
+                t1 = Thread(target=self.download_video)
+                t1.start()
+            else:
+                t2 = Thread(target=self.download_playlist)
+                t2.start()
+        except Exception as e:
+            print('4to to tyt ne tak')
+            print(e)
 
 
 if __name__ == "__main__":
