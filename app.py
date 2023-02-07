@@ -167,7 +167,6 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showerror(title='Error', message='Пожалуйста введите правильный URL адрес видео')
         except Exception as e:
             if type(e) == http.client.IncompleteRead:
-                print(f'****** {type(e)} ********')
                 self.check_btn()
             else:
                 tkinter.messagebox.showerror(title='Error', message='Что-то не так, повторите попытку')
@@ -193,7 +192,6 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showerror(title='Error', message='Проверьте ссылку плэйлиста')
         except Exception as e:
             if type(e) == http.client.IncompleteRead:
-                print(f'****** {type(e)} ********')
                 self.check_btn_playlist()
             else:
                 tkinter.messagebox.showerror(title='Error', message='Что-то не так, повторите попытку')
@@ -254,7 +252,6 @@ class App(customtkinter.CTk):
             self.download_button.configure(state="normal")
         except Exception as e:
             if type(e) == http.client.IncompleteRead or type(e) == PYex.PytubeError:
-                print(f'****** {type(e)} ********')
                 self.download_video()
             else:
                 print(e)
@@ -289,14 +286,12 @@ class App(customtkinter.CTk):
             for i in selected_links:
                 yt_obj = YouTube(i, on_progress_callback=on_progress)
                 if os.path.isfile(f'{path}/{yt_obj.title}.mp4'):
-                    print("уже скачано")
                     self.label_count_playlist.configure(text=f'{self.count} / {len(selected_links)}')
                     continue
                 else:
                     filters = yt_obj.streams.filter(progressive=True, file_extension='mp4')
                     filters.get_highest_resolution().download(output_path=f'{self.entry_path_playlist.get()}',
                                                               filename=f'{yt_obj.title}.mp4')
-                    print(f'Uploaded {yt_obj.title}.mp4')
 
                     if self.count < len(selected_links):
                         self.count += 1
@@ -308,15 +303,12 @@ class App(customtkinter.CTk):
             self.download_button_playlist.configure(state="normal")
         except Exception as e:
             if type(e) == http.client.IncompleteRead or type(e) == PYex.PytubeError:
-                print(f'****** {type(e)} ********')
                 self.download_playlist()
             else:
-                print(e)
                 tkinter.messagebox.showerror(title='Error', message='Что-то не так, повторите попытку')
 
     def threading(self):
         try:
-
             if self.tabview.get() == 'VIDEO ↓':
                 t1 = Thread(target=self.download_video)
                 t1.start()
@@ -324,7 +316,6 @@ class App(customtkinter.CTk):
                 t2 = Thread(target=self.download_playlist)
                 t2.start()
         except Exception as e:
-            print('4to to tyt ne tak')
             print(e)
 
 
