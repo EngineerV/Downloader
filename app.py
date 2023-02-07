@@ -4,7 +4,6 @@ from PIL import Image, ImageTk
 import http.client
 import urllib.error
 import customtkinter
-import requests
 import tkinter
 import os
 
