@@ -2,6 +2,7 @@ from pytube import YouTube, Playlist, exceptions as PYex
 from threading import Thread
 from PIL import Image, ImageTk
 import http.client
+import requests
 import urllib.error
 import customtkinter
 import tkinter
